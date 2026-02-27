@@ -282,7 +282,7 @@
       <div class="table-card">
         <div class="card-header-custom">
           <span class="card-title-text">Catálogo de Artículos</span>
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-art')"><i class="bi bi-plus-lg me-1"></i>Nuevo</button>
+          <button class="btn btn-primary btn-sm" onclick="abrirModalNuevo('modal-art')"><i class="bi bi-plus-lg me-1"></i>Nuevo</button>
         </div>
         <div class="p-3 border-bottom">
           <div class="row g-2">
@@ -310,7 +310,7 @@
       <div class="table-card">
         <div class="card-header-custom">
           <span class="card-title-text">Categorías</span>
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-cat')"><i class="bi bi-plus-lg me-1"></i>Nueva</button>
+          <button class="btn btn-primary btn-sm" onclick="abrirModalNuevo('modal-cat')"><i class="bi bi-plus-lg me-1"></i>Nueva</button>
         </div>
         <div class="table-responsive">
           <table class="table table-hover mb-0">
@@ -353,7 +353,7 @@
       <div class="table-card">
         <div class="card-header-custom">
           <span class="card-title-text">Personal</span>
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-per')"><i class="bi bi-plus-lg me-1"></i>Nuevo</button>
+          <button class="btn btn-primary btn-sm" onclick="abrirModalNuevo('modal-per')"><i class="bi bi-plus-lg me-1"></i>Nuevo</button>
         </div>
         <div class="p-3 border-bottom">
           <div class="input-group input-group-sm" style="max-width:320px">
@@ -375,7 +375,7 @@
       <div class="table-card">
         <div class="card-header-custom">
           <span class="card-title-text">Oficinas</span>
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-of')"><i class="bi bi-plus-lg me-1"></i>Nueva</button>
+          <button class="btn btn-primary btn-sm" onclick="abrirModalNuevo('modal-of')"><i class="bi bi-plus-lg me-1"></i>Nueva</button>
         </div>
         <div class="table-responsive">
           <table class="table table-hover mb-0">
@@ -391,7 +391,7 @@
       <div class="table-card">
         <div class="card-header-custom">
           <span class="card-title-text">Usuarios del Sistema</span>
-          <button class="btn btn-primary btn-sm" onclick="abrirModal('modal-usu')"><i class="bi bi-plus-lg me-1"></i>Nuevo</button>
+          <button class="btn btn-primary btn-sm" onclick="abrirModalNuevo('modal-usu')"><i class="bi bi-plus-lg me-1"></i>Nuevo</button>
         </div>
         <div class="table-responsive">
           <table class="table table-hover mb-0">
@@ -697,8 +697,12 @@ function toast(msg,type='success'){
 }
 
 // ── MODALES ──
+// abrirModal: solo muestra el modal SIN resetear (usado al EDITAR)
 function abrirModal(id){
-  // Reset formulario al abrir nuevo
+  (_bsM[id]=_bsM[id]||new bootstrap.Modal(document.getElementById(id))).show();
+}
+// abrirModalNuevo: resetea el formulario y genera código (usado al crear NUEVO)
+function abrirModalNuevo(id){
   const resetMap={
     'modal-art':()=>{document.getElementById('art-id').value='';document.getElementById('modal-art-title').textContent='Nuevo Artículo';['art-cod','art-nom','art-ubic','art-desc'].forEach(f=>document.getElementById(f).value='');document.getElementById('art-smin').value='5';document.getElementById('art-precio').value='0.00';document.getElementById('art-uni').value='unidad';document.getElementById('art-cat').value='';genCodigo('art');},
     'modal-cat':()=>{document.getElementById('cat-id').value='';document.getElementById('modal-cat-title').textContent='Nueva Categoría';['cat-cod','cat-nom','cat-desc'].forEach(f=>document.getElementById(f).value='');genCodigo('cat');},
@@ -716,7 +720,6 @@ function genCodigo(tipo){
   const prefijos={art:'ART',cat:'CAT',of:'OFC'};
   const campos={art:'art-cod',cat:'cat-cod',of:'of-cod'};
   const ts=Date.now().toString().slice(-4);
-  const rand=Math.floor(Math.random()*900+100);
   document.getElementById(campos[tipo]).value=`${prefijos[tipo]}-${ts}`;
 }
 
