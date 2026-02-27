@@ -4,144 +4,69 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InventaPro — Almacenero</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-  :root{
-    --bg:#f0f4ff;
-    --bg2:#ffffff;
-    --bg3:#f5f8ff;
-    --border:#e2e8f8;
-    --accent:#2563eb;
-    --accent-light:#eff4ff;
-    --green:#16a34a;
-    --green-light:#f0fdf4;
-    --red:#dc2626;
-    --red-light:#fef2f2;
-    --yellow:#d97706;
-    --text:#0f172a;
-    --text2:#475569;
-    --text3:#94a3b8;
-    --radius:12px;
-    --shadow:0 2px 12px rgba(37,99,235,.08);
-    --shadow-md:0 8px 30px rgba(37,99,235,.12);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  :root { --font: 'Plus Jakarta Sans', sans-serif; }
+  * { font-family: var(--font); }
+  body { background: #f0f4ff; min-height: 100vh; }
 
-  /* LOGIN */
-  #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#1d4ed8 100%);display:flex;align-items:center;justify-content:center;z-index:9999}
-  .login-card{background:#fff;border-radius:20px;padding:48px 40px;width:380px;max-width:90vw;box-shadow:0 30px 80px rgba(0,0,0,.3)}
-  .login-logo{text-align:center;margin-bottom:32px}
-  .login-badge{background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 12px;border-radius:20px;display:inline-block;margin-bottom:12px}
-  .login-logo h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--text)}
-  .login-logo p{color:var(--text2);font-size:13px;margin-top:4px}
-  .form-group{margin-bottom:20px}
-  .form-group label{display:block;font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-  .form-control{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-size:14px;font-family:inherit;transition:.2s}
-  .form-control:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-  .btn-primary{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s}
-  .btn-primary:hover{background:#1d4ed8;transform:translateY(-1px);box-shadow:var(--shadow-md)}
-  .login-error{background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:10px 14px;color:var(--red);font-size:13px;margin-bottom:16px;display:none}
+  /* NAV */
+  .navbar { background: #fff !important; border-bottom: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .navbar-brand { font-weight: 800; font-size: 1.2rem; color: #0f172a !important; }
+  .navbar-brand span { color: #1a56db; }
 
-  /* APP */
-  #app{display:none}
-  header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
-  .header-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
-  .header-logo .dot{width:10px;height:10px;background:var(--accent);border-radius:50%}
-  .header-info{display:flex;align-items:center;gap:16px}
-  .header-user{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px}
-  .header-user .avatar{width:28px;height:28px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px}
-  .header-user .uname{font-size:13px;font-weight:600}
-  .btn-logout{background:none;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;transition:.2s}
-  .btn-logout:hover{border-color:var(--red);color:var(--red)}
-
-  .main-content{max-width:1100px;margin:0 auto;padding:28px 24px}
+  /* STAT MINI */
+  .stat-mini { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; padding: 14px 18px; text-align: center; }
+  .stat-mini .val { font-size: 22px; font-weight: 800; color: #0f172a; line-height: 1; }
+  .stat-mini .lbl { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
 
   /* TABS */
-  .tabs{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:6px;gap:4px;margin-bottom:28px;box-shadow:var(--shadow)}
-  .tab{flex:1;padding:10px;border-radius:8px;border:none;background:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text2);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-  .tab:hover{background:var(--bg3)}
-  .tab.active.entrada{background:var(--green-light);color:var(--green);border:1px solid #86efac}
-  .tab.active.salida{background:var(--red-light);color:var(--red);border:1px solid #fca5a5}
-  .tab.active.historial{background:var(--accent-light);color:var(--accent);border:1px solid #93c5fd}
-  .tab-icon{font-size:18px}
+  .tab-pills { display: flex; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 6px; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+  .tab-pill { flex: 1; padding: 10px 8px; border-radius: 8px; border: none; background: none; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); color: #64748b; transition: .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .tab-pill:hover { background: #f8fafc; color: #334155; }
+  .tab-pill.act-ent { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+  .tab-pill.act-sal { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .tab-pill.act-his { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
 
-  /* FORM CARDS */
-  .form-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:none}
-  .form-card.active{display:block}
-  .form-card-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-  .form-card-header .icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-  .icon-entrada{background:var(--green-light)}
-  .icon-salida{background:var(--red-light)}
-  .form-card-header h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
-  .form-card-header p{font-size:13px;color:var(--text2);margin-top:2px}
-  .form-body{padding:28px}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .form-group-v2{margin-bottom:0}
-  .form-group-v2 label{display:block;font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-  .form-control-v2{width:100%;background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:14px;font-family:inherit;transition:.2s}
-  .form-control-v2:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
-  .span-2{grid-column:1/-1}
+  /* FORM CARD */
+  .form-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .form-card-head { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #f1f5f9; }
+  .form-card-head .ico { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .form-card-head h5 { font-weight: 700; margin: 0; font-size: 15px; }
+  .form-card-head p { margin: 0; font-size: 12px; color: #64748b; }
+  .form-card-body { padding: 20px; }
 
-  /* STOCK BADGE */
-  .stock-preview{background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;display:none}
-  .stock-preview.show{display:flex}
-  .stock-label{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
-  .stock-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
-  .stock-low{color:var(--red)}
-  .stock-ok{color:var(--green)}
+  /* STOCK PREVIEW */
+  .stock-preview { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; }
 
-  /* BTNS */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:.2s;letter-spacing:0.2px}
-  .btn-full{width:100%}
-  .btn-entrada{background:var(--green);color:#fff}
-  .btn-entrada:hover{background:#15803d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(22,163,74,.3)}
-  .btn-salida{background:var(--red);color:#fff}
-  .btn-salida:hover{background:#b91c1c;transform:translateY(-1px);box-shadow:0 6px 20px rgba(220,38,38,.3)}
-  .btn-outline{background:none;border:2px solid var(--border);color:var(--text2)}
-  .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-  .btn-form-area{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+  /* TABLE */
+  .table-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+  .table > :not(caption) > * > * { padding: .65rem .9rem; }
+  .table thead th { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .5px; background: #f8fafc; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+  .table td { font-size: 13px; color: #334155; vertical-align: middle; }
 
-  /* HISTORIAL */
-  .history-filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-  .hist-filter{background:var(--bg3);border:2px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;font-family:inherit;color:var(--text);transition:.2s}
-  .hist-filter:focus{outline:none;border-color:var(--accent)}
-  .hist-table-wrap{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:13.5px}
-  th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border)}
-  td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
-  tr:hover td{background:var(--bg3)}
-  tr:last-child td{border-bottom:none}
-  .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.3px}
-  .badge-green{background:var(--green-light);color:var(--green);border:1px solid #86efac}
-  .badge-red{background:var(--red-light);color:var(--red);border:1px solid #fca5a5}
+  /* BADGE */
+  .bdg { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .bdg-green { background: #d1fae5; color: #065f46; }
+  .bdg-red   { background: #fee2e2; color: #991b1b; }
 
-  /* STATS BAR */
-  .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
-  .stat-mini{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow)}
-  .stat-mini-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:6px}
-  .stat-mini-value{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text)}
+  /* FORMS */
+  .form-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+  .form-control, .form-select { border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 13.5px; padding: 9px 12px; font-family: var(--font); transition: .2s; }
+  .form-control:focus, .form-select:focus { border-color: #1a56db; box-shadow: 0 0 0 3px rgba(26,86,219,.1); }
+  .btn { font-family: var(--font); font-weight: 600; border-radius: 8px; font-size: 14px; }
 
-  /* ALERT */
-  .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:20px;display:flex;align-items:center;gap:10px;border:2px solid}
-  .alert-success{background:var(--green-light);border-color:#86efac;color:var(--green)}
-  .alert-error{background:var(--red-light);border-color:#fca5a5;color:var(--red)}
-  .alert-warning{background:#fffbeb;border-color:#fcd34d;color:var(--yellow)}
-  .alert{display:none}
-  .alert.show{display:flex}
+  /* LOGIN */
+  #login-screen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg,#0f172a,#1e40af); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .login-box { background: #fff; border-radius: 16px; padding: 40px 36px; width: 380px; max-width: 100%; box-shadow: 0 30px 80px rgba(0,0,0,.3); }
 
-  /* TOAST */
-  .toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px}
-  .toast{background:#fff;border-radius:12px;padding:14px 20px;font-size:13px;max-width:320px;animation:toastIn .3s ease;display:flex;align-items:center;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.15);font-weight:500}
-  .toast.success{border-left:4px solid var(--green);color:var(--text)}
-  .toast.error{border-left:4px solid var(--red);color:var(--text)}
-  @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-
-  @media(max-width:640px){
-    .form-grid{grid-template-columns:1fr}
-    .stats-bar{grid-template-columns:1fr}
-    .btn-form-area{grid-template-columns:1fr}
-    .tabs{flex-direction:column}
+  /* RESPONSIVE */
+  @media (max-width: 575.98px) {
+    .tab-pill { font-size: 12px; padding: 8px 4px; gap: 4px; }
+    .form-card-body { padding: 14px; }
+    .login-box { padding: 28px 20px; }
   }
 </style>
 </head>
@@ -149,501 +74,346 @@
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="login-badge">Almacenero</div>
-      <h1>InventaPro</h1>
-      <p>Portal de Registro de Movimientos</p>
+  <div class="login-box">
+    <div class="text-center mb-4">
+      <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 mb-2" style="font-size:11px;letter-spacing:.8px">ALMACENERO</span>
+      <div style="font-size:26px;font-weight:800;color:#0f172a">Inven<span style="color:#1a56db">Pro</span></div>
+      <div class="text-muted mt-1" style="font-size:13px">Portal de Registro de Movimientos</div>
     </div>
-    <div class="login-error" id="login-error"></div>
-    <div class="form-group">
-      <label>Usuario</label>
-      <input class="form-control" id="login-user" type="text" placeholder="Tu usuario" autocomplete="username">
-    </div>
-    <div class="form-group">
-      <label>Contraseña</label>
-      <input class="form-control" id="login-pass" type="password" placeholder="••••••••">
-    </div>
-    <button class="btn-primary" onclick="doLogin()" id="btn-login">Ingresar</button>
+    <div id="login-alert" class="alert alert-danger py-2 d-none" style="font-size:13px"></div>
+    <div class="mb-3"><label class="form-label">Usuario</label><input class="form-control" id="lu" placeholder="Tu usuario" autocomplete="username"></div>
+    <div class="mb-4"><label class="form-label">Contraseña</label><input class="form-control" id="lp" type="password" placeholder="••••••••"></div>
+    <button class="btn btn-primary w-100 py-2 fw-bold" id="btn-login" onclick="doLogin()"><i class="bi bi-box-arrow-in-right me-2"></i>Ingresar</button>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast-container" id="toast-container"></div>
-
-<!-- APP -->
-<div id="app">
-  <header>
-    <div class="header-logo">
-      <div class="dot"></div>
-      InventaPro
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand sticky-top px-3 px-md-4">
+  <a class="navbar-brand me-3">Inven<span>Pro</span></a>
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2 bg-light rounded px-2 py-1">
+      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px" id="uav">A</div>
+      <span style="font-size:13px;font-weight:600" id="uname">Almacenero</span>
     </div>
-    <div class="header-info">
-      <div class="header-user">
-        <div class="avatar" id="user-avatar">A</div>
-        <span class="uname" id="user-name">Almacenero</span>
-      </div>
-      <button class="btn-logout" onclick="doLogout()">Salir</button>
-    </div>
-  </header>
+    <button class="btn btn-sm btn-outline-danger" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i></button>
+  </div>
+</nav>
 
-  <main class="main-content">
+<!-- APP (hidden until login) -->
+<div id="app" style="display:none">
+  <div class="container-fluid px-3 px-md-4 py-4" style="max-width:900px;margin:0 auto">
 
     <!-- STATS -->
-    <div class="stats-bar" id="stats-bar">
-      <div class="stat-mini">
-        <div class="stat-mini-label">Entradas Hoy</div>
-        <div class="stat-mini-value" id="stat-entradas-hoy">—</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-label">Salidas Hoy</div>
-        <div class="stat-mini-value" id="stat-salidas-hoy">—</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-label">Artículos con Stock Bajo</div>
-        <div class="stat-mini-value" id="stat-stock-bajo" style="color:var(--red)">—</div>
-      </div>
+    <div class="row g-3 mb-4">
+      <div class="col-4"><div class="stat-mini"><div class="val text-success" id="st-ent">—</div><div class="lbl">Entradas mes</div></div></div>
+      <div class="col-4"><div class="stat-mini"><div class="val text-danger" id="st-sal">—</div><div class="lbl">Salidas mes</div></div></div>
+      <div class="col-4"><div class="stat-mini"><div class="val text-warning" id="st-sbajo">—</div><div class="lbl">Stock bajo</div></div></div>
     </div>
 
     <!-- TABS -->
-    <div class="tabs">
-      <button class="tab active entrada" onclick="switchTab('entrada',this)">
-        <span class="tab-icon">↑</span> Registrar Entrada
+    <div class="tab-pills mb-4" id="tab-pills">
+      <button class="tab-pill act-ent" id="tab-ent" onclick="switchTab('entrada',this)">
+        <i class="bi bi-arrow-up-circle-fill"></i><span>Entrada</span>
       </button>
-      <button class="tab salida" onclick="switchTab('salida',this)">
-        <span class="tab-icon">↓</span> Registrar Salida
+      <button class="tab-pill" id="tab-sal" onclick="switchTab('salida',this)">
+        <i class="bi bi-arrow-down-circle-fill"></i><span>Salida</span>
       </button>
-      <button class="tab historial" onclick="switchTab('historial',this)">
-        <span class="tab-icon">📋</span> Mi Historial
+      <button class="tab-pill" id="tab-his" onclick="switchTab('historial',this)">
+        <i class="bi bi-clock-history"></i><span>Historial</span>
       </button>
     </div>
 
-    <!-- ENTRADA -->
-    <div class="form-card active" id="card-entrada">
-      <div class="form-card-header">
-        <div class="icon icon-entrada">↑</div>
-        <div>
-          <h2>Registrar Entrada de Artículo</h2>
-          <p>Registro de ingreso de materiales al almacén</p>
+    <!-- TAB ENTRADA -->
+    <div id="tab-entrada">
+      <div class="form-card">
+        <div class="form-card-head" style="background:#d1fae5">
+          <div class="ico" style="background:#a7f3d0"><i class="bi bi-arrow-up-circle-fill text-success fs-4"></i></div>
+          <div><h5>Registrar Entrada de Artículo</h5><p>Ingreso de materiales al almacén</p></div>
         </div>
-      </div>
-      <div class="form-body">
-        <div id="alert-entrada" class="alert"></div>
-        <div class="form-grid">
-          <div class="form-group-v2 span-2">
-            <label>Artículo *</label>
-            <select class="form-control-v2" id="ent-articulo" onchange="updateStockPreview('ent')">
-              <option value="">Seleccionar artículo...</option>
-            </select>
-          </div>
-          <div id="ent-stock-preview" class="stock-preview span-2">
-            <div>
-              <div class="stock-label">Stock Actual</div>
-              <div class="stock-value" id="ent-stock-value">—</div>
+        <div class="form-card-body">
+          <div id="alert-ent" class="alert d-none mb-3" style="font-size:13px"></div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Artículo *</label>
+              <select class="form-select" id="ent-art" onchange="updateStock('ent')"><option value="">Seleccionar artículo...</option></select>
             </div>
-            <div style="text-align:right">
-              <div class="stock-label">Stock Mínimo</div>
-              <div class="stock-value" id="ent-stock-min" style="color:var(--text2)">—</div>
+            <div class="col-12" id="ent-stock-row" style="display:none">
+              <div class="stock-preview">
+                <div class="row g-2 text-center">
+                  <div class="col-4"><div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase">Stock Actual</div><div style="font-size:20px;font-weight:800" id="ent-sv">—</div></div>
+                  <div class="col-4"><div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase">Stock Mínimo</div><div style="font-size:20px;font-weight:800;color:#94a3b8" id="ent-sm">—</div></div>
+                  <div class="col-4"><div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase">Unidad</div><div style="font-size:16px;font-weight:700;color:#64748b" id="ent-un">—</div></div>
+                </div>
+              </div>
             </div>
-            <div style="text-align:right">
-              <div class="stock-label">Unidad</div>
-              <div class="stock-value" style="font-size:16px;color:var(--text2)" id="ent-unidad">—</div>
+            <div class="col-md-4">
+              <label class="form-label">Cantidad *</label>
+              <input class="form-control" id="ent-cant" type="number" min="1" value="1">
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Tipo de Entrada *</label>
+              <select class="form-select" id="ent-mot">
+                <option value="">Seleccionar...</option>
+                <option value="Compra">Compra</option>
+                <option value="Donación">Donación</option>
+                <option value="Transferencia">Transferencia entre almacenes</option>
+                <option value="Devolución">Devolución de oficina</option>
+                <option value="Ajuste de inventario">Ajuste de inventario</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Personal que entrega</label>
+              <select class="form-select" id="ent-per"><option value="">Seleccionar...</option></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Oficina de origen</label>
+              <select class="form-select" id="ent-of"><option value="">Seleccionar...</option></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">N° Documento</label>
+              <input class="form-control" id="ent-doc" placeholder="Ej: FAC-001">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Observaciones</label>
+              <textarea class="form-control" id="ent-obs" rows="2" placeholder="Detalles adicionales (opcional)"></textarea>
             </div>
           </div>
-          <div class="form-group-v2">
-            <label>Cantidad *</label>
-            <input class="form-control-v2" type="number" id="ent-cantidad" min="1" value="1" placeholder="0">
+          <div class="row g-2 mt-3">
+            <div class="col-6"><button class="btn btn-outline-secondary w-100" onclick="resetForm('ent')"><i class="bi bi-x-circle me-1"></i>Limpiar</button></div>
+            <div class="col-6"><button class="btn btn-success w-100 fw-bold" onclick="registrar('entrada')"><i class="bi bi-arrow-up-circle-fill me-1"></i>Confirmar Entrada</button></div>
           </div>
-          <div class="form-group-v2">
-            <label>Motivo / Tipo de Entrada *</label>
-            <select class="form-control-v2" id="ent-motivo">
-              <option value="">Seleccionar...</option>
-              <option value="Compra">Compra</option>
-              <option value="Donación">Donación</option>
-              <option value="Transferencia">Transferencia entre almacenes</option>
-              <option value="Devolución">Devolución de oficina</option>
-              <option value="Ajuste de inventario">Ajuste de inventario</option>
-              <option value="Otro">Otro (especificar en obs.)</option>
-            </select>
-          </div>
-          <div class="form-group-v2">
-            <label>Proveedor / Personal que entrega</label>
-            <select class="form-control-v2" id="ent-personal">
-              <option value="">Seleccionar...</option>
-            </select>
-          </div>
-          <div class="form-group-v2">
-            <label>Oficina de Origen (si aplica)</label>
-            <select class="form-control-v2" id="ent-oficina">
-              <option value="">Seleccionar...</option>
-            </select>
-          </div>
-          <div class="form-group-v2">
-            <label>N° Documento / Orden (opcional)</label>
-            <input class="form-control-v2" type="text" id="ent-documento" placeholder="Ej: FAC-001, ORD-2024-05">
-          </div>
-          <div class="form-group-v2 span-2">
-            <label>Observaciones</label>
-            <textarea class="form-control-v2" id="ent-observacion" rows="2" placeholder="Detalles adicionales (opcional)"></textarea>
-          </div>
-        </div>
-        <div class="btn-form-area">
-          <button class="btn btn-outline" onclick="resetForm('ent')">Limpiar</button>
-          <button class="btn btn-entrada" onclick="registrarMovimiento('entrada')">↑ Confirmar Entrada</button>
         </div>
       </div>
     </div>
 
-    <!-- SALIDA -->
-    <div class="form-card" id="card-salida">
-      <div class="form-card-header">
-        <div class="icon icon-salida">↓</div>
-        <div>
-          <h2>Registrar Salida de Artículo</h2>
-          <p>Despacho de materiales a oficinas o personal</p>
+    <!-- TAB SALIDA -->
+    <div id="tab-salida" style="display:none">
+      <div class="form-card">
+        <div class="form-card-head" style="background:#fee2e2">
+          <div class="ico" style="background:#fecaca"><i class="bi bi-arrow-down-circle-fill text-danger fs-4"></i></div>
+          <div><h5>Registrar Salida de Artículo</h5><p>Despacho de materiales a oficinas o personal</p></div>
         </div>
-      </div>
-      <div class="form-body">
-        <div id="alert-salida" class="alert"></div>
-        <div class="form-grid">
-          <div class="form-group-v2 span-2">
-            <label>Artículo *</label>
-            <select class="form-control-v2" id="sal-articulo" onchange="updateStockPreview('sal')">
-              <option value="">Seleccionar artículo...</option>
-            </select>
-          </div>
-          <div id="sal-stock-preview" class="stock-preview span-2">
-            <div>
-              <div class="stock-label">Stock Actual</div>
-              <div class="stock-value" id="sal-stock-value">—</div>
+        <div class="form-card-body">
+          <div id="alert-sal" class="alert d-none mb-3" style="font-size:13px"></div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Artículo *</label>
+              <select class="form-select" id="sal-art" onchange="updateStock('sal')"><option value="">Seleccionar artículo...</option></select>
             </div>
-            <div style="text-align:right">
-              <div class="stock-label">Stock Mínimo</div>
-              <div class="stock-value" id="sal-stock-min" style="color:var(--text2)">—</div>
+            <div class="col-12" id="sal-stock-row" style="display:none">
+              <div class="stock-preview">
+                <div class="row g-2 text-center">
+                  <div class="col-4"><div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase">Stock Actual</div><div style="font-size:20px;font-weight:800" id="sal-sv">—</div></div>
+                  <div class="col-4"><div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase">Stock Mínimo</div><div style="font-size:20px;font-weight:800;color:#94a3b8" id="sal-sm">—</div></div>
+                  <div class="col-4"><div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase">Unidad</div><div style="font-size:16px;font-weight:700;color:#64748b" id="sal-un">—</div></div>
+                </div>
+              </div>
             </div>
-            <div style="text-align:right">
-              <div class="stock-label">Unidad</div>
-              <div class="stock-value" style="font-size:16px;color:var(--text2)" id="sal-unidad">—</div>
+            <div class="col-md-4">
+              <label class="form-label">Cantidad *</label>
+              <input class="form-control" id="sal-cant" type="number" min="1" value="1">
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Tipo de Salida *</label>
+              <select class="form-select" id="sal-mot">
+                <option value="">Seleccionar...</option>
+                <option value="Solicitud de oficina">Solicitud de oficina</option>
+                <option value="Uso interno">Uso interno</option>
+                <option value="Asignación a personal">Asignación a personal</option>
+                <option value="Préstamo">Préstamo</option>
+                <option value="Baja/Descarte">Baja / Descarte</option>
+                <option value="Transferencia">Transferencia entre almacenes</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Personal que recibe *</label>
+              <select class="form-select" id="sal-per"><option value="">Seleccionar...</option></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Oficina destino *</label>
+              <select class="form-select" id="sal-of"><option value="">Seleccionar...</option></select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">N° Vale / Pedido</label>
+              <input class="form-control" id="sal-doc" placeholder="Ej: VALE-2024-001">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Observaciones</label>
+              <textarea class="form-control" id="sal-obs" rows="2" placeholder="Detalles adicionales (opcional)"></textarea>
             </div>
           </div>
-          <div class="form-group-v2">
-            <label>Cantidad *</label>
-            <input class="form-control-v2" type="number" id="sal-cantidad" min="1" value="1" placeholder="0">
+          <div class="row g-2 mt-3">
+            <div class="col-6"><button class="btn btn-outline-secondary w-100" onclick="resetForm('sal')"><i class="bi bi-x-circle me-1"></i>Limpiar</button></div>
+            <div class="col-6"><button class="btn btn-danger w-100 fw-bold" onclick="registrar('salida')"><i class="bi bi-arrow-down-circle-fill me-1"></i>Confirmar Salida</button></div>
           </div>
-          <div class="form-group-v2">
-            <label>Motivo / Tipo de Salida *</label>
-            <select class="form-control-v2" id="sal-motivo">
-              <option value="">Seleccionar...</option>
-              <option value="Solicitud de oficina">Solicitud de oficina</option>
-              <option value="Uso interno">Uso interno</option>
-              <option value="Asignación a personal">Asignación a personal</option>
-              <option value="Préstamo">Préstamo</option>
-              <option value="Baja/Descarte">Baja / Descarte</option>
-              <option value="Transferencia">Transferencia entre almacenes</option>
-              <option value="Otro">Otro (especificar en obs.)</option>
-            </select>
-          </div>
-          <div class="form-group-v2">
-            <label>Personal que Recibe *</label>
-            <select class="form-control-v2" id="sal-personal">
-              <option value="">Seleccionar personal...</option>
-            </select>
-          </div>
-          <div class="form-group-v2">
-            <label>Oficina Destino *</label>
-            <select class="form-control-v2" id="sal-oficina">
-              <option value="">Seleccionar oficina...</option>
-            </select>
-          </div>
-          <div class="form-group-v2">
-            <label>N° Pedido / Vale de Salida</label>
-            <input class="form-control-v2" type="text" id="sal-documento" placeholder="Ej: VALE-2024-001">
-          </div>
-          <div class="form-group-v2 span-2">
-            <label>Observaciones</label>
-            <textarea class="form-control-v2" id="sal-observacion" rows="2" placeholder="Detalles adicionales (opcional)"></textarea>
-          </div>
-        </div>
-        <div class="btn-form-area">
-          <button class="btn btn-outline" onclick="resetForm('sal')">Limpiar</button>
-          <button class="btn btn-salida" onclick="registrarMovimiento('salida')">↓ Confirmar Salida</button>
         </div>
       </div>
     </div>
 
-    <!-- HISTORIAL -->
-    <div class="form-card" id="card-historial">
-      <div class="form-card-header">
-        <div class="icon" style="background:var(--accent-light);font-size:18px">📋</div>
-        <div>
-          <h2>Mi Historial de Movimientos</h2>
-          <p>Movimientos registrados por ti en el sistema</p>
+    <!-- TAB HISTORIAL -->
+    <div id="tab-historial" style="display:none">
+      <div class="table-card">
+        <div class="p-3 border-bottom">
+          <div class="row g-2">
+            <div class="col-6 col-md-3"><input type="date" class="form-control form-control-sm" id="h-desde"></div>
+            <div class="col-6 col-md-3"><input type="date" class="form-control form-control-sm" id="h-hasta"></div>
+            <div class="col-6 col-md-3"><select class="form-select form-select-sm" id="h-tipo"><option value="">Todos</option><option value="entrada">Entradas</option><option value="salida">Salidas</option></select></div>
+            <div class="col-6 col-md-3"><button class="btn btn-outline-primary btn-sm w-100" onclick="loadHistorial()"><i class="bi bi-search me-1"></i>Filtrar</button></div>
+          </div>
         </div>
-      </div>
-      <div class="form-body">
-        <div class="history-filters">
-          <input type="date" class="hist-filter" id="hist-desde">
-          <input type="date" class="hist-filter" id="hist-hasta">
-          <select class="hist-filter" id="hist-tipo">
-            <option value="">Todos los tipos</option>
-            <option value="entrada">Entradas</option>
-            <option value="salida">Salidas</option>
-          </select>
-          <button class="btn btn-outline" onclick="loadHistorial()" style="padding:8px 16px;font-size:13px">Filtrar</button>
-        </div>
-        <div class="hist-table-wrap">
-          <table>
-            <thead><tr><th>Fecha y Hora</th><th>Tipo</th><th>Artículo</th><th>Cantidad</th><th>Motivo</th><th>Personal</th><th>Oficina</th></tr></thead>
-            <tbody id="tabla-historial"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Cargando historial...</td></tr></tbody>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead><tr><th>Fecha y Hora</th><th>Tipo</th><th>Artículo</th><th>Cant.</th><th>Motivo</th><th>Personal</th><th>Oficina</th></tr></thead>
+            <tbody id="t-hist"><tr><td colspan="7" class="text-center text-muted py-4">Cargando historial...</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-  </main>
+  </div>
 </div>
 
-<script>
-const API = 'https://inventario-backend-zpkt.onrender.com/api';
-let token = localStorage.getItem('alm_token') || null;
-let currentUser = JSON.parse(localStorage.getItem('alm_user') || 'null');
-let _articulos = [], _personal = [], _oficinas = [];
+<!-- TOAST -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index:9999">
+  <div id="main-toast" class="toast align-items-center text-white border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body fw-500" id="toast-msg"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
 
-async function api(path, method='GET', body=null){
-  const opts = {method, headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}};
-  if(body) opts.body = JSON.stringify(body);
-  const res = await fetch(API + path, opts);
-  if(res.status===401){ doLogout(); return null; }
-  const data = await res.json();
-  if(!res.ok) throw data;
-  return data;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API='https://inventario-backend-zpkt.onrender.com/api';
+let token=localStorage.getItem('alm_token');
+let cu=JSON.parse(localStorage.getItem('alm_user')||'null');
+let _art=[],_per=[],_of=[];
+
+async function api(path,method='GET',body=null){
+  const r=await fetch(API+path,{method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},...(body?{body:JSON.stringify(body)}:{})});
+  if(r.status===401){doLogout();return null;}
+  const d=await r.json(); if(!r.ok)throw d; return d;
 }
 
 async function doLogin(){
-  const username = document.getElementById('login-user').value.trim();
-  const password = document.getElementById('login-pass').value;
-  const btn = document.getElementById('btn-login');
-  const errEl = document.getElementById('login-error');
-  errEl.style.display='none';
-  if(!username||!password){ showLoginError('Ingrese usuario y contraseña.'); return; }
-  btn.textContent='Verificando...'; btn.disabled=true;
-  try {
-    const res = await fetch(`${API}/auth/login/`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({username, password})
-    });
-    const data = await res.json();
-    if(!res.ok){ showLoginError(data.error||'Credenciales incorrectas.'); return; }
-    // Almacenero solo puede acceder con rol almacenero o admin
-    if(!['almacenero','administrador'].includes(data.user.rol)){
-      showLoginError('No tiene permisos de acceso.'); return;
-    }
-    token = data.token; currentUser = data.user;
-    localStorage.setItem('alm_token', token);
-    localStorage.setItem('alm_user', JSON.stringify(currentUser));
+  const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  const btn=document.getElementById('btn-login'),al=document.getElementById('login-alert');
+  al.classList.add('d-none');
+  if(!u||!p){showLE('Ingrese usuario y contraseña.');return;}
+  btn.innerHTML='<span class="spinner-border spinner-border-sm me-2"></span>Verificando...'; btn.disabled=true;
+  try{
+    const res=await fetch(`${API}/auth/login/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const d=await res.json();
+    if(!res.ok){showLE(d.error||'Credenciales incorrectas.');return;}
+    if(!['almacenero','administrador'].includes(d.user.rol)){showLE('No tiene permisos de acceso.');return;}
+    token=d.token; cu=d.user;
+    localStorage.setItem('alm_token',token); localStorage.setItem('alm_user',JSON.stringify(cu));
     initApp();
-  } catch(e){ showLoginError('Error de conexión con el servidor.'); }
-  finally { btn.textContent='Ingresar'; btn.disabled=false; }
+  }catch(e){showLE('Error de conexión con el servidor.');}
+  finally{btn.innerHTML='<i class="bi bi-box-arrow-in-right me-2"></i>Ingresar';btn.disabled=false;}
 }
-
-function showLoginError(msg){
-  const el = document.getElementById('login-error');
-  el.textContent=msg; el.style.display='block';
-}
-
-function doLogout(){
-  localStorage.removeItem('alm_token'); localStorage.removeItem('alm_user');
-  token=null; currentUser=null;
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-}
-
-document.getElementById('login-pass').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
+function showLE(m){const e=document.getElementById('login-alert');e.textContent=m;e.classList.remove('d-none');}
+function doLogout(){localStorage.clear();location.reload();}
+document.getElementById('lp').addEventListener('keypress',e=>{if(e.key==='Enter')doLogin();});
 
 async function initApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('user-name').textContent = currentUser.nombre||currentUser.username;
-  document.getElementById('user-avatar').textContent = (currentUser.nombre||'A')[0].toUpperCase();
-  await loadCatalogos();
+  document.getElementById('uname').textContent=cu.nombre||cu.username;
+  document.getElementById('uav').textContent=(cu.nombre||'A')[0].toUpperCase();
+  await loadCats();
   loadStats();
 }
 
-async function loadCatalogos(){
-  try {
-    const [arts, pers, ofs] = await Promise.all([
-      api('/articulos/?page_size=200'),
-      api('/personal/?page_size=200'),
-      api('/oficinas/?page_size=100'),
-    ]);
-    _articulos = arts.results||arts;
-    _personal = pers.results||pers;
-    _oficinas = ofs.results||ofs;
-    fillSelects();
-  } catch(e){ toast('Error al cargar datos','error'); }
-}
-
-function fillSelects(){
-  const artSelects = ['ent-articulo','sal-articulo'];
-  artSelects.forEach(id => {
-    const el = document.getElementById(id);
-    const first = el.options[0]; el.innerHTML=''; el.appendChild(first);
-    _articulos.filter(a=>a.activo!==false).forEach(a => {
-      const o = document.createElement('option'); o.value=a.id;
-      o.textContent = `${a.codigo} — ${a.nombre}  (${a.stock_actual} ${a.unidad_medida})`;
-      el.appendChild(o);
-    });
-  });
-  const perSelects = ['ent-personal','sal-personal'];
-  perSelects.forEach(id => {
-    const el = document.getElementById(id);
-    const first = el.options[0]; el.innerHTML=''; el.appendChild(first);
-    _personal.filter(p=>p.activo!==false).forEach(p => {
-      const o = document.createElement('option'); o.value=p.id;
-      o.textContent = `${p.apellidos}, ${p.nombres}${p.cargo?' — '+p.cargo:''}`;
-      el.appendChild(o);
-    });
-  });
-  const ofSelects = ['ent-oficina','sal-oficina'];
-  ofSelects.forEach(id => {
-    const el = document.getElementById(id);
-    const first = el.options[0]; el.innerHTML=''; el.appendChild(first);
-    _oficinas.filter(o=>o.activo!==false).forEach(of => {
-      const o = document.createElement('option'); o.value=of.id;
-      o.textContent = `${of.codigo} — ${of.nombre}`;
-      el.appendChild(o);
-    });
-  });
+async function loadCats(){
+  try{
+    const[a,p,o]=await Promise.all([api('/articulos/?page_size=200'),api('/personal/?page_size=200'),api('/oficinas/?page_size=100')]);
+    _art=a.results||a; _per=p.results||p; _of=o.results||o;
+    ['ent-art','sal-art'].forEach(id=>{const el=document.getElementById(id);el.innerHTML='<option value="">Seleccionar artículo...</option>';_art.filter(x=>x.activo!==false).forEach(x=>el.appendChild(new Option(`${x.codigo} — ${x.nombre}  (Stock: ${x.stock_actual} ${x.unidad_medida})`,x.id)));});
+    ['ent-per','sal-per'].forEach(id=>{const el=document.getElementById(id);el.innerHTML='<option value="">Seleccionar...</option>';_per.filter(x=>x.activo!==false).forEach(x=>el.appendChild(new Option(`${x.apellidos}, ${x.nombres}${x.cargo?' — '+x.cargo:''}`,x.id)));});
+    ['ent-of','sal-of'].forEach(id=>{const el=document.getElementById(id);el.innerHTML='<option value="">Seleccionar...</option>';_of.filter(x=>x.activo!==false).forEach(x=>el.appendChild(new Option(`${x.codigo} — ${x.nombre}`,x.id)));});
+  }catch(e){}
 }
 
 async function loadStats(){
-  try {
-    const data = await api('/dashboard/');
-    document.getElementById('stat-entradas-hoy').textContent = data.movimientos_mes.entradas;
-    document.getElementById('stat-salidas-hoy').textContent = data.movimientos_mes.salidas;
-    document.getElementById('stat-stock-bajo').textContent = data.totales.stock_bajo;
-  } catch(e){}
+  try{const d=await api('/dashboard/');document.getElementById('st-ent').textContent=d.movimientos_mes.entradas;document.getElementById('st-sal').textContent=d.movimientos_mes.salidas;document.getElementById('st-sbajo').textContent=d.totales.stock_bajo;}catch(e){}
 }
 
-function updateStockPreview(prefix){
-  const id = parseInt(document.getElementById(`${prefix}-articulo`).value);
-  const a = _articulos.find(x=>x.id===id);
-  const preview = document.getElementById(`${prefix}-stock-preview`);
-  if(a){
-    preview.classList.add('show');
-    const sv = document.getElementById(`${prefix}-stock-value`);
-    sv.textContent = a.stock_actual;
-    sv.className = `stock-value ${a.stock_bajo?'stock-low':'stock-ok'}`;
-    document.getElementById(`${prefix}-stock-min`).textContent = a.stock_minimo;
-    document.getElementById(`${prefix}-unidad`).textContent = a.unidad_medida;
-  } else { preview.classList.remove('show'); }
+function updateStock(p){
+  const id=parseInt(document.getElementById(`${p}-art`).value);
+  const a=_art.find(x=>x.id===id);
+  const row=document.getElementById(`${p}-stock-row`);
+  if(a){row.style.display='block';const sv=document.getElementById(`${p}-sv`);sv.textContent=a.stock_actual;sv.style.color=a.stock_bajo?'#e02424':'#16a34a';document.getElementById(`${p}-sm`).textContent=a.stock_minimo;document.getElementById(`${p}-un`).textContent=a.unidad_medida;}
+  else row.style.display='none';
 }
 
-async function registrarMovimiento(tipo){
-  const p = tipo==='entrada' ? 'ent' : 'sal';
-  const artId = document.getElementById(`${p}-articulo`).value;
-  const cantidad = parseInt(document.getElementById(`${p}-cantidad`).value)||0;
-  const motivo = document.getElementById(`${p}-motivo`).value;
-  const alertEl = document.getElementById(`alert-${tipo}`);
-  alertEl.className='alert'; alertEl.style.display='none';
-
-  if(!artId||!cantidad||!motivo){
-    alertEl.className='alert alert-error show';
-    alertEl.textContent='⚠ Por favor complete los campos obligatorios: Artículo, Cantidad y Motivo.';
-    return;
-  }
-
-  // Check stock for salida
-  if(tipo==='salida'){
-    const a = _articulos.find(x=>x.id===parseInt(artId));
-    if(a && a.stock_actual < cantidad){
-      alertEl.className='alert alert-error show';
-      alertEl.textContent=`⚠ Stock insuficiente. Disponible: ${a.stock_actual} ${a.unidad_medida}. Solicitado: ${cantidad}.`;
-      return;
-    }
-  }
-
-  const body = {
-    tipo,
-    articulo: artId,
-    cantidad,
-    motivo,
-    personal: document.getElementById(`${p}-personal`).value||null,
-    oficina_destino: document.getElementById(`${p}-oficina`).value||null,
-    documento_referencia: document.getElementById(`${p}-documento`).value,
-    observacion: document.getElementById(`${p}-observacion`).value,
-  };
-
-  try {
-    await api('/movimientos/', 'POST', body);
-    alertEl.className=`alert alert-success show`;
-    alertEl.textContent=`✓ ${tipo==='entrada'?'Entrada':'Salida'} registrada exitosamente para el artículo seleccionado.`;
-    resetForm(p);
-    loadCatalogos();
-    loadStats();
-    toast(`${tipo==='entrada'?'Entrada':'Salida'} registrada exitosamente`, 'success');
-    setTimeout(() => { alertEl.className='alert'; alertEl.style.display='none'; }, 5000);
-  } catch(e){
-    const msg = e.non_field_errors?e.non_field_errors[0]:(Object.values(e).flat().join(' ')||'Error al registrar');
-    alertEl.className='alert alert-error show';
-    alertEl.textContent='⚠ '+msg;
-  }
+async function registrar(tipo){
+  const p=tipo==='entrada'?'ent':'sal';
+  const al=document.getElementById(`alert-${p==='ent'?'ent':'sal'}`);
+  al.classList.add('d-none');
+  const artId=document.getElementById(`${p}-art`).value;
+  const cant=parseInt(document.getElementById(`${p}-cant`).value)||0;
+  const mot=document.getElementById(`${p}-mot`).value;
+  if(!artId||!cant||!mot){al.className='alert alert-danger';al.textContent='⚠ Complete los campos obligatorios: Artículo, Cantidad y Tipo.';al.classList.remove('d-none');return;}
+  if(tipo==='salida'){const a=_art.find(x=>x.id===parseInt(artId));if(a&&a.stock_actual<cant){al.className='alert alert-danger';al.textContent=`⚠ Stock insuficiente. Disponible: ${a.stock_actual} ${a.unidad_medida}. Solicitado: ${cant}.`;al.classList.remove('d-none');return;}}
+  const body={tipo,articulo:artId,cantidad:cant,motivo:mot,personal:document.getElementById(`${p}-per`).value||null,oficina_destino:document.getElementById(`${p}-of`).value||null,documento_referencia:document.getElementById(`${p}-doc`).value,observacion:document.getElementById(`${p}-obs`).value};
+  try{
+    await api('/movimientos/','POST',body);
+    al.className='alert alert-success';
+    al.textContent=`✓ ${tipo==='entrada'?'Entrada':'Salida'} registrada exitosamente.`;
+    al.classList.remove('d-none');
+    resetForm(p); loadCats(); loadStats();
+    toast(`${tipo==='entrada'?'Entrada':'Salida'} registrada`,'success');
+    setTimeout(()=>al.classList.add('d-none'),5000);
+  }catch(e){const msg=e.non_field_errors?e.non_field_errors[0]:(Object.values(e).flat().join(' ')||'Error al registrar');al.className='alert alert-danger';al.textContent='⚠ '+msg;al.classList.remove('d-none');}
 }
 
-function resetForm(prefix){
-  document.getElementById(`${prefix}-articulo`).value='';
-  document.getElementById(`${prefix}-cantidad`).value='1';
-  document.getElementById(`${prefix}-motivo`).value='';
-  const per = document.getElementById(`${prefix}-personal`); if(per) per.value='';
-  const of = document.getElementById(`${prefix}-oficina`); if(of) of.value='';
-  const doc = document.getElementById(`${prefix}-documento`); if(doc) doc.value='';
-  const obs = document.getElementById(`${prefix}-observacion`); if(obs) obs.value='';
-  const preview = document.getElementById(`${prefix}-stock-preview`); if(preview) preview.classList.remove('show');
+function resetForm(p){
+  document.getElementById(`${p}-art`).value='';
+  document.getElementById(`${p}-cant`).value='1';
+  document.getElementById(`${p}-mot`).value='';
+  ['per','of','doc','obs'].forEach(f=>{const el=document.getElementById(`${p}-${f}`);if(el)el.value='';});
+  document.getElementById(`${p}-stock-row`).style.display='none';
 }
 
 async function loadHistorial(){
-  const desde = document.getElementById('hist-desde').value;
-  const hasta = document.getElementById('hist-hasta').value;
-  const tipo = document.getElementById('hist-tipo').value;
-  let url = '/movimientos/?page_size=50';
-  if(desde) url+=`&fecha_desde=${desde}`;
-  if(hasta) url+=`&fecha_hasta=${hasta}`;
-  if(tipo) url+=`&tipo=${tipo}`;
-  try {
-    const data = await api(url);
-    const rows = data.results||data;
-    document.getElementById('tabla-historial').innerHTML = rows.length
-      ? rows.map(m => `<tr>
-          <td style="font-size:12px;color:var(--text2)">${new Date(m.fecha).toLocaleString('es-PE')}</td>
-          <td><span class="badge ${m.tipo==='entrada'?'badge-green':'badge-red'}">${m.tipo==='entrada'?'↑ Entrada':'↓ Salida'}</span></td>
-          <td style="font-weight:500;color:var(--text)">${m.articulo_nombre||'—'}</td>
-          <td style="font-weight:700;color:${m.tipo==='entrada'?'var(--green)':'var(--red)'}">${m.tipo==='entrada'?'+':'−'}${m.cantidad} ${m.articulo_unidad||''}</td>
-          <td>${m.motivo||'—'}</td>
-          <td style="color:var(--text2)">${m.personal_nombre||'—'}</td>
-          <td style="color:var(--text2)">${m.oficina_nombre||'—'}</td>
-        </tr>`).join('')
-      : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Sin movimientos registrados</td></tr>';
-  } catch(e){ toast('Error al cargar historial','error'); }
+  const d=document.getElementById('h-desde').value,h=document.getElementById('h-hasta').value,t=document.getElementById('h-tipo').value;
+  let url='/movimientos/?page_size=50';if(d)url+=`&fecha_desde=${d}`;if(h)url+=`&fecha_hasta=${h}`;if(t)url+=`&tipo=${t}`;
+  try{
+    const data=await api(url);const rows=data.results||data;
+    document.getElementById('t-hist').innerHTML=rows.length
+      ?rows.map(m=>`<tr>
+        <td style="font-size:12px" class="text-muted">${new Date(m.fecha).toLocaleString('es-PE')}</td>
+        <td><span class="bdg ${m.tipo==='entrada'?'bdg-green':'bdg-red'}">${m.tipo==='entrada'?'↑ Entrada':'↓ Salida'}</span></td>
+        <td class="fw-500">${m.articulo_nombre||'—'}</td>
+        <td class="fw-bold ${m.tipo==='entrada'?'text-success':'text-danger'}">${m.tipo==='entrada'?'+':'-'}${m.cantidad} ${m.articulo_unidad||''}</td>
+        <td class="text-muted small">${m.motivo||'—'}</td>
+        <td class="text-muted small">${m.personal_nombre||'—'}</td>
+        <td class="text-muted small">${m.oficina_nombre||'—'}</td>
+      </tr>`).join('')
+      :'<tr><td colspan="7" class="text-center py-4 text-muted">Sin movimientos registrados</td></tr>';
+  }catch(e){}
 }
 
-function switchTab(name, btn){
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.form-card').forEach(c => c.classList.remove('active'));
-  document.getElementById(`card-${name}`).classList.add('active');
-  if(name==='historial') loadHistorial();
+function switchTab(name,btn){
+  ['entrada','salida','historial'].forEach(t=>{document.getElementById(`tab-${t}`).style.display='none';});
+  document.getElementById(`tab-${name}`).style.display='block';
+  document.querySelectorAll('.tab-pill').forEach(b=>b.className='tab-pill');
+  const cls={'entrada':'act-ent','salida':'act-sal','historial':'act-his'};
+  btn.classList.add(cls[name]);
+  if(name==='historial')loadHistorial();
 }
 
-function toast(msg, type='success'){
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = `<span style="font-size:18px">${type==='success'?'✓':'✕'}</span>${msg}`;
-  c.appendChild(t);
-  setTimeout(()=>t.remove(),3500);
+function toast(msg,type='success'){
+  const t=document.getElementById('main-toast'),m=document.getElementById('toast-msg');
+  t.className=`toast align-items-center text-white border-0 bg-${type==='success'?'success':'danger'}`;
+  m.textContent=msg; bootstrap.Toast.getOrCreateInstance(t,{delay:3000}).show();
 }
 
-if(token && currentUser) initApp();
+if(token&&cu)initApp();
 </script>
 </body>
 </html>
