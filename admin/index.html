@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>InventaPro — Panel Administrador</title>
+<title>AlmacenDREM — Panel Administrador</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -603,7 +603,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-const API='http://129.213.112.191/api';
+const API='https://inventario-backend-zpkt.onrender.com/api';
 let token=localStorage.getItem('inv_token');
 let cu=JSON.parse(localStorage.getItem('inv_user')||'null');
 let _art=[],_cat=[],_of=[],_per=[];
@@ -751,31 +751,33 @@ async function loadDashboard(){
 }
 
 // ── ARTÍCULOS ──
+let _artFiltrados = [];
 async function loadArticulos(){
   try{
     const q=document.getElementById('s-art-q').value,c=document.getElementById('s-art-cat').value;
-    let url='/articulos/?page_size=100'; if(q)url+=`&search=${encodeURIComponent(q)}`; if(c)url+=`&categoria=${c}`;
+    let url='/articulos/?page_size=1000'; if(q)url+=`&search=${encodeURIComponent(q)}`; if(c)url+=`&categoria=${c}`;
     const d=await api(url); _art=d.results||d;
     const est=document.getElementById('s-art-est').value;
-    const list=est==='bajo'?_art.filter(a=>a.stock_bajo):est==='normal'?_art.filter(a=>!a.stock_bajo):_art;
-    document.getElementById('t-art').innerHTML=list.length
-      ?list.map(a=>`<tr>
-        <td><code class="text-primary small">${a.codigo}</code></td>
-        <td class="fw-500">${a.nombre}</td>
-        <td><span class="bdg bdg-purple">${a.categoria_nombre||'—'}</span></td>
-        <td class="fw-bold ${a.stock_bajo?'text-danger':'text-success'}">${a.stock_actual}</td>
-        <td class="text-muted">${a.stock_minimo}</td>
-        <td class="text-muted small">${a.unidad_medida}</td>
-        <td class="text-muted small">S/ ${parseFloat(a.precio_unitario).toFixed(2)}</td>
-        <td><span class="bdg ${a.stock_bajo?'bdg-red':'bdg-green'}">${a.stock_bajo?'⚠ Bajo':'✓ OK'}</span></td>
-        <td>
-          <div class="d-flex gap-1">
+    _artFiltrados=est==='bajo'?_art.filter(a=>a.stock_bajo):est==='normal'?_art.filter(a=>!a.stock_bajo):_art;
+    _pg['t-art']=1;
+    paginar(_artFiltrados,'t-art',rows=>{
+      document.getElementById('t-art').innerHTML=rows.length
+        ?rows.map(a=>`<tr>
+          <td><code class="text-primary small">${a.codigo}</code></td>
+          <td class="fw-500">${a.nombre}</td>
+          <td><span class="bdg bdg-purple">${a.categoria_nombre||'—'}</span></td>
+          <td class="fw-bold ${a.stock_bajo?'text-danger':'text-success'}">${a.stock_actual}</td>
+          <td class="text-muted">${a.stock_minimo}</td>
+          <td class="text-muted small">${a.unidad_medida}</td>
+          <td class="text-muted small">S/ ${parseFloat(a.precio_unitario).toFixed(2)}</td>
+          <td><span class="bdg ${a.stock_bajo?'bdg-red':'bdg-green'}">${a.stock_bajo?'⚠ Bajo':'✓ OK'}</span></td>
+          <td><div class="d-flex gap-1">
             <button class="btn btn-outline-primary btn-sm" onclick='editArt(${JSON.stringify(a).replace(/'/g,"&#39;")})'><i class="bi bi-pencil"></i></button>
             <button class="btn btn-outline-danger btn-sm" onclick="del('articulos',${a.id},loadArticulos)"><i class="bi bi-trash"></i></button>
-          </div>
-        </td>
-      </tr>`).join('')
-      :'<tr><td colspan="9" class="text-center py-4 text-muted">No se encontraron artículos</td></tr>';
+          </div></td>
+        </tr>`).join('')
+        :'<tr><td colspan="9" class="text-center py-4 text-muted">No se encontraron artículos</td></tr>';
+    });
   }catch(e){}
 }
 function editArt(a){if(typeof a==='string')a=JSON.parse(a); document.getElementById('modal-art-title').textContent='Editar Artículo'; ['art-id','art-cod','art-nom','art-smin','art-precio','art-ubic','art-desc'].forEach(id=>{const f=id.replace('art-',''); const map={id:'id',cod:'codigo',nom:'nombre',smin:'stock_minimo',precio:'precio_unitario',ubic:'ubicacion',desc:'descripcion'}; document.getElementById(id).value=a[map[f]]||'';}); document.getElementById('art-cat').value=a.categoria; document.getElementById('art-uni').value=a.unidad_medida; abrirModal('modal-art');}
@@ -789,17 +791,21 @@ async function saveArt(){
 // ── CATEGORÍAS ──
 async function loadCats2(){
   try{
-    const d=await api('/categorias/');
-    document.getElementById('t-cat').innerHTML=(d.results||d).map(c=>`<tr>
-      <td><code class="text-primary small">${c.codigo}</code></td>
-      <td class="fw-500">${c.nombre}</td>
-      <td>${c.total_articulos||0}</td>
-      <td><span class="bdg ${c.activo?'bdg-green':'bdg-red'}">${c.activo?'Activo':'Inactivo'}</span></td>
-      <td><div class="d-flex gap-1">
-        <button class="btn btn-outline-primary btn-sm" onclick="editCat(${c.id},'${c.codigo}','${c.nombre}','${c.descripcion||''}')"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-outline-danger btn-sm" onclick="del('categorias',${c.id},loadCats2)"><i class="bi bi-trash"></i></button>
-      </div></td>
-    </tr>`).join('')||'<tr><td colspan="5" class="text-center py-4 text-muted">Sin categorías</td></tr>';
+    const d=await api('/categorias/?page_size=1000');
+    const lista=d.results||d;
+    _pg['t-cat']=1;
+    paginar(lista,'t-cat',rows=>{
+      document.getElementById('t-cat').innerHTML=rows.map(c=>`<tr>
+        <td><code class="text-primary small">${c.codigo}</code></td>
+        <td class="fw-500">${c.nombre}</td>
+        <td>${c.total_articulos||0}</td>
+        <td><span class="bdg ${c.activo?'bdg-green':'bdg-red'}">${c.activo?'Activo':'Inactivo'}</span></td>
+        <td><div class="d-flex gap-1">
+          <button class="btn btn-outline-primary btn-sm" onclick="editCat(${c.id},'${c.codigo}','${c.nombre}','${c.descripcion||''}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-outline-danger btn-sm" onclick="del('categorias',${c.id},loadCats2)"><i class="bi bi-trash"></i></button>
+        </div></td>
+      </tr>`).join('')||'<tr><td colspan="5" class="text-center py-4 text-muted">Sin categorías</td></tr>';
+    });
   }catch(e){}
 }
 function editCat(id,cod,nom,desc){document.getElementById('modal-cat-title').textContent='Editar Categoría';document.getElementById('cat-id').value=id;document.getElementById('cat-cod').value=cod;document.getElementById('cat-nom').value=nom;document.getElementById('cat-desc').value=desc;abrirModal('modal-cat');}
@@ -809,21 +815,24 @@ async function saveCat(){const id=document.getElementById('cat-id').value;const 
 async function loadMovimientos(){
   try{
     const d=document.getElementById('m-desde').value,h=document.getElementById('m-hasta').value,t=document.getElementById('m-tipo').value;
-    let url='/movimientos/?page_size=50';if(d)url+=`&fecha_desde=${d}`;if(h)url+=`&fecha_hasta=${h}`;if(t)url+=`&tipo=${t}`;
+    let url='/movimientos/?page_size=1000';if(d)url+=`&fecha_desde=${d}`;if(h)url+=`&fecha_hasta=${h}`;if(t)url+=`&tipo=${t}`;
     const data=await api(url);const rows=data.results||data;
-    document.getElementById('t-mov').innerHTML=rows.length
-      ?rows.map(m=>`<tr>
-        <td style="font-size:12px" class="text-muted">${new Date(m.fecha).toLocaleString('es-PE')}</td>
-        <td><span class="bdg ${m.tipo==='entrada'?'bdg-green':'bdg-red'}">${m.tipo==='entrada'?'↑ Entrada':'↓ Salida'}</span></td>
-        <td>${m.articulo_nombre||'—'}</td>
-        <td class="fw-bold ${m.tipo==='entrada'?'text-success':'text-danger'}">${m.tipo==='entrada'?'+':'-'}${m.cantidad} ${m.articulo_unidad||''}</td>
-        <td class="text-muted small">${m.cantidad_anterior}</td>
-        <td class="text-muted small">${m.cantidad_posterior}</td>
-        <td class="text-muted small">${m.motivo||'—'}</td>
-        <td class="text-muted small">${m.personal_nombre||'—'}</td>
-        <td class="text-muted small">${m.registrado_por_nombre||'—'}</td>
-      </tr>`).join('')
-      :'<tr><td colspan="9" class="text-center py-4 text-muted">Sin movimientos</td></tr>';
+    _pg['t-mov']=1;
+    paginar(rows,'t-mov',lista=>{
+      document.getElementById('t-mov').innerHTML=lista.length
+        ?lista.map(m=>`<tr>
+          <td style="font-size:12px" class="text-muted">${new Date(m.fecha).toLocaleString('es-PE')}</td>
+          <td><span class="bdg ${m.tipo==='entrada'?'bdg-green':'bdg-red'}">${m.tipo==='entrada'?'↑ Entrada':'↓ Salida'}</span></td>
+          <td>${m.articulo_nombre||'—'}</td>
+          <td class="fw-bold ${m.tipo==='entrada'?'text-success':'text-danger'}">${m.tipo==='entrada'?'+':'-'}${m.cantidad} ${m.articulo_unidad||''}</td>
+          <td class="text-muted small">${m.cantidad_anterior}</td>
+          <td class="text-muted small">${m.cantidad_posterior}</td>
+          <td class="text-muted small">${m.motivo||'—'}</td>
+          <td class="text-muted small">${m.personal_nombre||'—'}</td>
+          <td class="text-muted small">${m.registrado_por_nombre||'—'}</td>
+        </tr>`).join('')
+        :'<tr><td colspan="9" class="text-center py-4 text-muted">Sin movimientos</td></tr>';
+    });
   }catch(e){}
 }
 function abrirMovModal(tipo){
@@ -859,20 +868,24 @@ async function saveMov(){
 async function loadPersonal(){
   try{
     const q=document.getElementById('s-per-q').value;
-    let url='/personal/?page_size=100';if(q)url+=`&search=${encodeURIComponent(q)}`;
+    let url='/personal/?page_size=1000';if(q)url+=`&search=${encodeURIComponent(q)}`;
     const d=await api(url);
-    document.getElementById('t-per').innerHTML=(d.results||d).map(p=>`<tr>
-      <td><code class="small">${p.dni}</code></td>
-      <td class="fw-500">${p.apellidos}, ${p.nombres}</td>
-      <td class="text-muted small">${p.cargo||'—'}</td>
-      <td class="text-muted small">${p.oficina_nombre||'—'}</td>
-      <td class="text-muted small">${p.telefono||'—'}</td>
-      <td><span class="bdg ${p.activo?'bdg-green':'bdg-red'}">${p.activo?'Activo':'Inactivo'}</span></td>
-      <td><div class="d-flex gap-1">
-        <button class="btn btn-outline-primary btn-sm" onclick='editPer(${JSON.stringify(p).replace(/'/g,"&#39;")})'><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-outline-danger btn-sm" onclick="del('personal',${p.id},loadPersonal)"><i class="bi bi-trash"></i></button>
-      </div></td>
-    </tr>`).join('')||'<tr><td colspan="7" class="text-center py-4 text-muted">Sin personal</td></tr>';
+    const lista=d.results||d;
+    _pg['t-per']=1;
+    paginar(lista,'t-per',rows=>{
+      document.getElementById('t-per').innerHTML=rows.map(p=>`<tr>
+        <td><code class="small">${p.dni}</code></td>
+        <td class="fw-500">${p.apellidos}, ${p.nombres}</td>
+        <td class="text-muted small">${p.cargo||'—'}</td>
+        <td class="text-muted small">${p.oficina_nombre||'—'}</td>
+        <td class="text-muted small">${p.telefono||'—'}</td>
+        <td><span class="bdg ${p.activo?'bdg-green':'bdg-red'}">${p.activo?'Activo':'Inactivo'}</span></td>
+        <td><div class="d-flex gap-1">
+          <button class="btn btn-outline-primary btn-sm" onclick='editPer(${JSON.stringify(p).replace(/'/g,"&#39;")})'><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-outline-danger btn-sm" onclick="del('personal',${p.id},loadPersonal)"><i class="bi bi-trash"></i></button>
+        </div></td>
+      </tr>`).join('')||'<tr><td colspan="7" class="text-center py-4 text-muted">Sin personal</td></tr>';
+    });
   }catch(e){}
 }
 function editPer(p){if(typeof p==='string')p=JSON.parse(p);document.getElementById('modal-per-title').textContent='Editar Personal';document.getElementById('per-id').value=p.id;document.getElementById('per-nom').value=p.nombres;document.getElementById('per-ape').value=p.apellidos;document.getElementById('per-dni').value=p.dni;document.getElementById('per-car').value=p.cargo||'';document.getElementById('per-tel').value=p.telefono||'';document.getElementById('per-email').value=p.email||'';document.getElementById('per-of').value=p.oficina||'';abrirModal('modal-per');}
@@ -881,18 +894,22 @@ async function savePer(){const id=document.getElementById('per-id').value;const 
 // ── OFICINAS ──
 async function loadOficinas(){
   try{
-    const d=await api('/oficinas/');
-    document.getElementById('t-of').innerHTML=(d.results||d).map(o=>`<tr>
-      <td><code class="text-primary small">${o.codigo}</code></td>
-      <td class="fw-500">${o.nombre}</td>
-      <td class="text-muted small">${o.descripcion||'—'}</td>
-      <td>${o.total_personal||0}</td>
-      <td><span class="bdg ${o.activo?'bdg-green':'bdg-red'}">${o.activo?'Activa':'Inactiva'}</span></td>
-      <td><div class="d-flex gap-1">
-        <button class="btn btn-outline-primary btn-sm" onclick="editOf(${o.id},'${o.codigo}','${o.nombre}','${o.descripcion||''}')"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-outline-danger btn-sm" onclick="del('oficinas',${o.id},loadOficinas)"><i class="bi bi-trash"></i></button>
-      </div></td>
-    </tr>`).join('')||'<tr><td colspan="6" class="text-center py-4 text-muted">Sin oficinas</td></tr>';
+    const d=await api('/oficinas/?page_size=1000');
+    const lista=d.results||d;
+    _pg['t-of']=1;
+    paginar(lista,'t-of',rows=>{
+      document.getElementById('t-of').innerHTML=rows.map(o=>`<tr>
+        <td><code class="text-primary small">${o.codigo}</code></td>
+        <td class="fw-500">${o.nombre}</td>
+        <td class="text-muted small">${o.descripcion||'—'}</td>
+        <td>${o.total_personal||0}</td>
+        <td><span class="bdg ${o.activo?'bdg-green':'bdg-red'}">${o.activo?'Activa':'Inactiva'}</span></td>
+        <td><div class="d-flex gap-1">
+          <button class="btn btn-outline-primary btn-sm" onclick="editOf(${o.id},'${o.codigo}','${o.nombre}','${o.descripcion||''}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-outline-danger btn-sm" onclick="del('oficinas',${o.id},loadOficinas)"><i class="bi bi-trash"></i></button>
+        </div></td>
+      </tr>`).join('')||'<tr><td colspan="6" class="text-center py-4 text-muted">Sin oficinas</td></tr>';
+    });
   }catch(e){}
 }
 function editOf(id,cod,nom,desc){document.getElementById('modal-of-title').textContent='Editar Oficina';document.getElementById('of-id').value=id;document.getElementById('of-cod').value=cod;document.getElementById('of-nom').value=nom;document.getElementById('of-desc').value=desc;abrirModal('modal-of');}
@@ -901,18 +918,22 @@ async function saveOf(){const id=document.getElementById('of-id').value;const bo
 // ── USUARIOS ──
 async function loadUsuarios(){
   try{
-    const d=await api('/usuarios/');
-    document.getElementById('t-usu').innerHTML=(d.results||d).map(u=>`<tr>
-      <td><code class="small">${u.username}</code></td>
-      <td>${u.first_name} ${u.last_name}</td>
-      <td><span class="bdg ${u.rol==='administrador'?'bdg-blue':'bdg-purple'}">${u.rol}</span></td>
-      <td class="text-muted small">${u.oficina_nombre||'—'}</td>
-      <td><span class="bdg ${u.activo_sistema?'bdg-green':'bdg-red'}">${u.activo_sistema?'Activo':'Inactivo'}</span></td>
-      <td><div class="d-flex gap-1">
-        <button class="btn btn-outline-primary btn-sm" onclick='editUsu(${JSON.stringify(u).replace(/'/g,"&#39;")})'><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-outline-danger btn-sm" onclick="del('usuarios',${u.id},loadUsuarios)"><i class="bi bi-trash"></i></button>
-      </div></td>
-    </tr>`).join('')||'<tr><td colspan="6" class="text-center py-4 text-muted">Sin usuarios</td></tr>';
+    const d=await api('/usuarios/?page_size=1000');
+    const lista=d.results||d;
+    _pg['t-usu']=1;
+    paginar(lista,'t-usu',rows=>{
+      document.getElementById('t-usu').innerHTML=rows.map(u=>`<tr>
+        <td><code class="small">${u.username}</code></td>
+        <td>${u.first_name} ${u.last_name}</td>
+        <td><span class="bdg ${u.rol==='administrador'?'bdg-blue':'bdg-purple'}">${u.rol}</span></td>
+        <td class="text-muted small">${u.oficina_nombre||'—'}</td>
+        <td><span class="bdg ${u.activo_sistema?'bdg-green':'bdg-red'}">${u.activo_sistema?'Activo':'Inactivo'}</span></td>
+        <td><div class="d-flex gap-1">
+          <button class="btn btn-outline-primary btn-sm" onclick='editUsu(${JSON.stringify(u).replace(/'/g,"&#39;")})'><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-outline-danger btn-sm" onclick="del('usuarios',${u.id},loadUsuarios)"><i class="bi bi-trash"></i></button>
+        </div></td>
+      </tr>`).join('')||'<tr><td colspan="6" class="text-center py-4 text-muted">Sin usuarios</td></tr>';
+    });
   }catch(e){}
 }
 function editUsu(u){if(typeof u==='string')u=JSON.parse(u);document.getElementById('modal-usu-title').textContent='Editar Usuario';document.getElementById('usu-id').value=u.id;document.getElementById('usu-user').value=u.username;document.getElementById('usu-nom').value=u.first_name||'';document.getElementById('usu-ape').value=u.last_name||'';document.getElementById('usu-email').value=u.email||'';document.getElementById('usu-rol').value=u.rol;document.getElementById('usu-of').value=u.oficina||'';document.getElementById('usu-pass').value='';abrirModal('modal-usu');}
@@ -921,6 +942,51 @@ async function saveUsu(){const id=document.getElementById('usu-id').value;const 
 // ── REPORTES ──
 async function loadRepInv(){const c=document.getElementById('rep-cat-f').value;let url='/reportes/inventario/';if(c)url+=`?categoria=${c}`;try{const d=await api(url);document.getElementById('t-rep-inv').innerHTML=d.map(a=>`<tr><td><code class="small">${a.codigo}</code></td><td>${a.nombre}</td><td><span class="bdg bdg-purple">${a.categoria}</span></td><td class="text-muted small">${a.unidad}</td><td class="fw-bold ${a.estado==='Bajo'?'text-danger':'text-success'}">${a.stock_actual}</td><td class="text-muted">${a.stock_minimo}</td><td class="text-muted small">S/ ${parseFloat(a.precio).toFixed(2)}</td><td>S/ ${parseFloat(a.valor_total).toFixed(2)}</td><td class="text-muted small">${a.ubicacion||'—'}</td><td><span class="bdg ${a.estado==='Bajo'?'bdg-red':'bdg-green'}">${a.estado}</span></td></tr>`).join('')||'<tr><td colspan="10" class="text-center py-4 text-muted">Sin datos</td></tr>';}catch(e){}}
 async function loadRepMov(){const d=document.getElementById('rep-desde').value,h=document.getElementById('rep-hasta').value,t=document.getElementById('rep-tipo').value,o=document.getElementById('rep-of-f').value,p=document.getElementById('rep-per-f').value;let url='/reportes/movimientos/?a=1';if(d)url+=`&fecha_desde=${d}`;if(h)url+=`&fecha_hasta=${h}`;if(t)url+=`&tipo=${t}`;if(o)url+=`&oficina=${o}`;if(p)url+=`&personal=${p}`;try{const data=await api(url);document.getElementById('t-rep-mov').innerHTML=data.map(m=>`<tr><td style="font-size:12px">${new Date(m.fecha).toLocaleString('es-PE')}</td><td><span class="bdg ${m.tipo==='entrada'?'bdg-green':'bdg-red'}">${m.tipo==='entrada'?'↑':'↓'} ${m.tipo}</span></td><td>${m.articulo_nombre||'—'}</td><td class="fw-bold">${m.cantidad}</td><td class="text-muted small">${m.motivo||'—'}</td><td class="text-muted small">${m.personal_nombre||'—'}</td><td class="text-muted small">${m.oficina_nombre||'—'}</td><td class="text-muted small">${m.documento_referencia||'—'}</td><td class="text-muted small">${m.registrado_por_nombre||'—'}</td></tr>`).join('')||'<tr><td colspan="9" class="text-center py-4 text-muted">Sin movimientos</td></tr>';}catch(e){}}
+
+// ── PAGINACIÓN ──
+const PG_SIZE = 15;
+const _pg = {}; // estado de página por tabla
+
+function paginar(datos, tablaId, renderFn) {
+  if (!_pg[tablaId]) _pg[tablaId] = 1;
+  const total = datos.length;
+  const totalPags = Math.ceil(total / PG_SIZE) || 1;
+  if (_pg[tablaId] > totalPags) _pg[tablaId] = 1;
+  const inicio = (_pg[tablaId] - 1) * PG_SIZE;
+  const pagData = datos.slice(inicio, inicio + PG_SIZE);
+  renderFn(pagData);
+  renderPaginador(tablaId, total, totalPags);
+}
+
+function renderPaginador(tablaId, total, totalPags) {
+  const pid = `pg-${tablaId}`;
+  let el = document.getElementById(pid);
+  if (!el) {
+    el = document.createElement('div');
+    el.id = pid;
+    el.className = 'px-3 py-2 border-top d-flex justify-content-between align-items-center';
+    const tabla = document.getElementById(tablaId);
+    if (tabla) tabla.closest('.table-responsive').after(el);
+  }
+  const cur = _pg[tablaId] || 1;
+  const desde = total === 0 ? 0 : (cur - 1) * PG_SIZE + 1;
+  const hasta = Math.min(cur * PG_SIZE, total);
+  el.innerHTML = `
+    <small class="text-muted">Mostrando ${desde}–${hasta} de ${total} registros</small>
+    <div class="d-flex gap-1">
+      <button class="btn btn-outline-secondary btn-sm" onclick="irPag('${tablaId}',1)" ${cur===1?'disabled':''}>«</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="irPag('${tablaId}',${cur-1})" ${cur===1?'disabled':''}>‹</button>
+      <span class="btn btn-primary btn-sm disabled">${cur}/${totalPags}</span>
+      <button class="btn btn-outline-secondary btn-sm" onclick="irPag('${tablaId}',${cur+1})" ${cur===totalPags?'disabled':''}>›</button>
+      <button class="btn btn-outline-secondary btn-sm" onclick="irPag('${tablaId}',${totalPags})" ${cur===totalPags?'disabled':''}>»</button>
+    </div>`;
+}
+
+function irPag(tablaId, pag) {
+  _pg[tablaId] = pag;
+  const reloads = {'t-art':loadArticulos,'t-cat':loadCats2,'t-per':loadPersonal,'t-of':loadOficinas,'t-usu':loadUsuarios,'t-mov':loadMovimientos};
+  if (reloads[tablaId]) reloads[tablaId]();
+}
 
 // ── DELETE ──
 async function del(res,id,reload){if(!confirm('¿Confirma eliminar este registro?'))return;try{await api(`/${res}/${id}/`,'DELETE');toast('Eliminado');reload();}catch(e){toast('No se puede eliminar, tiene registros relacionados.','error');}}
