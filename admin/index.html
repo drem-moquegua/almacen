@@ -759,7 +759,7 @@ async function loadArticulos(){
     const d=await api(url); _art=d.results||d;
     const est=document.getElementById('s-art-est').value;
     _artFiltrados=est==='bajo'?_art.filter(a=>a.stock_bajo):est==='normal'?_art.filter(a=>!a.stock_bajo):_art;
-    _pg['t-art']=1;
+    
     paginar(_artFiltrados,'t-art',rows=>{
       document.getElementById('t-art').innerHTML=rows.length
         ?rows.map(a=>`<tr>
@@ -793,7 +793,7 @@ async function loadCats2(){
   try{
     const d=await api('/categorias/?page_size=1000');
     const lista=d.results||d;
-    _pg['t-cat']=1;
+    
     paginar(lista,'t-cat',rows=>{
       document.getElementById('t-cat').innerHTML=rows.map(c=>`<tr>
         <td><code class="text-primary small">${c.codigo}</code></td>
@@ -817,7 +817,7 @@ async function loadMovimientos(){
     const d=document.getElementById('m-desde').value,h=document.getElementById('m-hasta').value,t=document.getElementById('m-tipo').value;
     let url='/movimientos/?page_size=1000';if(d)url+=`&fecha_desde=${d}`;if(h)url+=`&fecha_hasta=${h}`;if(t)url+=`&tipo=${t}`;
     const data=await api(url);const rows=data.results||data;
-    _pg['t-mov']=1;
+    
     paginar(rows,'t-mov',lista=>{
       document.getElementById('t-mov').innerHTML=lista.length
         ?lista.map(m=>`<tr>
@@ -871,7 +871,7 @@ async function loadPersonal(){
     let url='/personal/?page_size=1000';if(q)url+=`&search=${encodeURIComponent(q)}`;
     const d=await api(url);
     const lista=d.results||d;
-    _pg['t-per']=1;
+    
     paginar(lista,'t-per',rows=>{
       document.getElementById('t-per').innerHTML=rows.map(p=>`<tr>
         <td><code class="small">${p.dni}</code></td>
@@ -896,7 +896,7 @@ async function loadOficinas(){
   try{
     const d=await api('/oficinas/?page_size=1000');
     const lista=d.results||d;
-    _pg['t-of']=1;
+    
     paginar(lista,'t-of',rows=>{
       document.getElementById('t-of').innerHTML=rows.map(o=>`<tr>
         <td><code class="text-primary small">${o.codigo}</code></td>
@@ -920,7 +920,7 @@ async function loadUsuarios(){
   try{
     const d=await api('/usuarios/?page_size=1000');
     const lista=d.results||d;
-    _pg['t-usu']=1;
+    
     paginar(lista,'t-usu',rows=>{
       document.getElementById('t-usu').innerHTML=rows.map(u=>`<tr>
         <td><code class="small">${u.username}</code></td>
@@ -949,6 +949,9 @@ const _pg = {}; // estado de página por tabla
 
 function paginar(datos, tablaId, renderFn) {
   if (!_pg[tablaId]) _pg[tablaId] = 1;
+  // Guardar cache para navegación entre páginas
+  _cache[tablaId] = datos;
+  _cache[tablaId+'_fn'] = renderFn;
   const total = datos.length;
   const totalPags = Math.ceil(total / PG_SIZE) || 1;
   if (_pg[tablaId] > totalPags) _pg[tablaId] = 1;
@@ -982,10 +985,14 @@ function renderPaginador(tablaId, total, totalPags) {
     </div>`;
 }
 
+// Cache de datos por tabla para paginación
+const _cache = {};
+
 function irPag(tablaId, pag) {
   _pg[tablaId] = pag;
-  const reloads = {'t-art':loadArticulos,'t-cat':loadCats2,'t-per':loadPersonal,'t-of':loadOficinas,'t-usu':loadUsuarios,'t-mov':loadMovimientos};
-  if (reloads[tablaId]) reloads[tablaId]();
+  if (_cache[tablaId]) {
+    paginar(_cache[tablaId], tablaId, _cache[tablaId+'_fn']);
+  }
 }
 
 // ── DELETE ──
